@@ -27,10 +27,10 @@ scene("game", () => {
     "                                  ",
     "                                  ",
     "                                  ",
-    "                   ^               ",
-    "                 =======           ",
     "                                  ",
-    "      %      =*=%=                ",
+    "                                  ",
+    "                                  ",
+    "  %      =*=%=                    ",
     "                             -+   ",
     "                   ^    ^    ()   ",
     "===========================  =====",
@@ -40,7 +40,7 @@ scene("game", () => {
     width: 20,
     height: 20,
     "=": [sprite("block"), solid()],
-    "@": [sprite("coin", solid())],
+    "@": [sprite("coin"), "coin"],
     "%": [sprite("surprise"), solid(), "coin-surprise"],
     "*": [sprite("surprise"), solid(), "mushroom-surprise"],
     "^": [sprite("evil-shroom"), solid()],
@@ -59,11 +59,16 @@ scene("game", () => {
     pos(30, 6),
     layer("ui"),
     {
-      value: "test",
+      value: "s",
     },
   ]);
 
   add(["level " + "test", pos(4, 6)]);
+
+  const MOVE_SPEED = 120;
+  const JUMP_FORCE = 260;
+  let BIGGER_JUMP_FORCE = 560;
+  let CURRENT_JUMP_FORCE = JUMP_FORCE;
 
   function big() {
     let timer = 0;
@@ -71,6 +76,7 @@ scene("game", () => {
     return {
       update() {
         if (isBig) {
+          CURRENT_JUMP_FORCE = BIGGER_JUMP_FORCE;
           timer -= dt();
           if (timer <= 0) {
             this.smallify();
@@ -101,8 +107,20 @@ scene("game", () => {
     big(),
     origin("bot"),
   ]);
+
   action("mushroom", (mushroom) => {
-    mushroom.move(10, 0);
+    mushroom.move(20, 0);
+  });
+
+  player.collides("mushroom", (mushroom) => {
+    destroy(mushroom);
+    player.biggify(6);
+  });
+
+  player.collides("coin", (c) => {
+    destroy(c);
+    scoreLabel.value++;
+    scoreLabel.text = scoreLabel.value;
   });
 
   player.on("headbump", (obj) => {
@@ -118,9 +136,6 @@ scene("game", () => {
     }
   });
 
-  const MOVE_SPEED = 120;
-  const JUMP_FORCE = 360;
-
   keyDown("left", () => {
     player.move(-MOVE_SPEED, 0);
   });
@@ -129,7 +144,7 @@ scene("game", () => {
   });
   keyPress("up", () => {
     if (player.grounded()) {
-      player.jump(JUMP_FORCE);
+      player.jump(CURRENT_JUMP_FORCE);
     }
   });
 });
