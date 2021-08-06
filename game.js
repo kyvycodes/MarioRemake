@@ -21,19 +21,40 @@ loadSprite("pipe-top-right", "https://i.imgur.com/hj2GK4n.png");
 loadSprite("pipe-bottom-left", "https://i.imgur.com/c1cYSbt.png");
 loadSprite("pipe-bottom-right", "https://i.imgur.com/nqQ79eI.png");
 
+loadSprite("blue-block", "https://i.imgur.com/fVscIbn.png");
+loadSprite("blue-brick", "https://i.imgur.com/3e5YRQd.png");
+loadSprite("blue-steel", "https://i.imgur.com/gqVoI2b.png");
+loadSprite("blue-evil-shroom", "https://i.imgur.com/SvV4ueD.png");
+loadSprite("blue-surprise", "https://i.imgur.com/RMqCc1G.png");
+
 scene("game", ({ level, score }) => {
   layers(["bg", "obj", "ui"], "obj");
-  const map = [
-    "                                  ",
-    "                                  ",
-    "                                  ",
-    "                                  ",
-    "                       =========  ",
-    "                                  ",
-    "  %      =*=%=                    ",
-    "                             -+   ",
-    "                   ^    ^    ()   ",
-    "===========================  =====",
+  const maps = [
+    [
+      "                                  ",
+      "                                  ",
+      "                                  ",
+      "                                  ",
+      "                       =========  ",
+      "                                  ",
+      "  %      =*=%=                    ",
+      "                             -+   ",
+      "                   ^    ^    ()   ",
+      "===========================  =====",
+    ],
+    [
+      "&                                  ",
+      "&                                  ",
+      " &                                 ",
+      " &                                ",
+      "&                           ^  ^          ",
+      "&                       ~~~~~~~~~  ",
+      " &                    ~~~~           ",
+      "&        =*=%=       ~~~~~             ",
+      "&                                ",
+      " &                  ^    ^       ",
+      "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    ],
   ];
 
   const levelConfig = {
@@ -43,16 +64,28 @@ scene("game", ({ level, score }) => {
     "@": [sprite("coin"), "coin"],
     "%": [sprite("surprise"), solid(), "coin-surprise"],
     "*": [sprite("surprise"), solid(), "mushroom-surprise"],
-    "^": [sprite("evil-shroom"), solid(), "dangerous"],
+    "^": [sprite("evil-shroom"), solid(), "dangerous", body()],
     "}": [sprite("unboxed"), solid()],
     "(": [sprite("pipe-bottom-left"), solid(), scale(0.5)],
     ")": [sprite("pipe-bottom-right"), solid(), scale(0.5)],
     "-": [sprite("pipe-top-left"), solid(), scale(0.5), "pipe"],
     "+": [sprite("pipe-top-right"), solid(), scale(0.5), "pipe"],
     "#": [sprite("mushroom"), solid(), "mushroom", body()],
+
+    "!": [sprite("blue-block"), solid(), scale(0.5)],
+    "&": [sprite("blue-brick"), solid(), scale(0.5)],
+    "/": [sprite("blue-evil-shroom"), solid(), scale(0.5), "dangerous", body()],
+    "@": [
+      sprite("blue-surprise"),
+      solid(),
+      scale(0.5),
+      "coin-surprise",
+      body(),
+    ],
+    "~": [sprite("blue-steel"), solid(), scale(0.5)],
   };
 
-  const gameLevel = addLevel(map, levelConfig);
+  const gameLevel = addLevel(maps[level], levelConfig);
 
   const scoreLabel = add([
     text(score),
